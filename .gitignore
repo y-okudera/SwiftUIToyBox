@@ -93,3 +93,14 @@ iOSInjectionProject/
 
 # Provisioning profile
 *.mobileprovision
+
+# Bundler
+/vendor/bundle
+/vendor/bin
+
+# XcodeGen
+/*.xcodeproj
+
+# Ignore auto generated files.
+**/Generated/*
+!**/Generated/.gitkeep

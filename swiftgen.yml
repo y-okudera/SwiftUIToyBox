@@ -1,0 +1,14 @@
+strings:
+  inputs: SwiftUIToyBox/Presentation/Resource/Strings/Localizable.strings
+  outputs:
+    - templateName: structured-swift5
+      output: SwiftUIToyBox/Presentation/Resource/Strings/Generated/L10n-Constants.swift
+xcassets:
+  inputs:
+    - SwiftUIToyBox/Presentation/Resource/Assets/Assets.xcassets
+    - SwiftUIToyBox-UIKit/Resource/Assets/SwiftUIToyBoxUIKitAssets.xcassets
+  outputs:
+    - templateName: swift5
+      output: SwiftUIToyBox/Presentation/Resource/Assets/Generated/Assets.swift
+    - templateName: swift5
+      output: SwiftUIToyBox-UIKit/Resource/Assets/Generated/Assets.swift

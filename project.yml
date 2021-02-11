@@ -1,0 +1,357 @@
+# https://github.com/yonaskolb/XcodeGen/blob/master/Docs/ProjectSpec.md
+
+# プロジェクト名（SwiftUIToyBox）で検索して、適切なプロジェクト名に置換する
+
+# プロジェクト全体の設定
+name: SwiftUIToyBox
+fileGroups: [SwiftUIToyBox]
+configs:
+  develop-debug: debug
+  develop-release: release
+  production-debug: debug
+  production-release: release
+options:
+  minimumXcodeGenVersion: "2.8.0"
+  usesTabs: false
+  indentWidth: 4
+  tabWidth: 4
+  deploymentTarget:
+    iOS: "13.0"
+  developmentLanguage: ja
+attributes:
+  ORGANIZATIONNAME: ""
+
+####################
+
+# hoge_app -> SwiftUIToyBox (app)
+# 以下の4つの組み合わせで定義する
+## 1. 共通定義
+## 2. ビルド定義
+## 3. 環境定義
+## 4. 環境&ビルド毎のプロビジョニングプロファイル定義
+
+settingGroups:
+  # Configurationによらない共通定義
+  common_app:
+    PRODUCT_BUNDLE_IDENTIFIER: "jp.yuoku.SwiftUIToyBox$(BUNDLE_ID_SUFFIX)"
+    SWIFT_VERSION: "5.0"
+    CLANG_ENABLE_OBJC_WEAK: YES
+    MTL_FAST_MATH: YES
+    CODE_SIGN_STYLE: Manual
+    TARGETED_DEVICE_FAMILY: "1,2"
+    SWIFT_OBJC_BRIDGING_HEADER: $(SRCROOT)/$(PROJECT)/Application/Resource/SwiftUIToyBox-Header.h
+    CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED: YES
+    OTHER_LINKER_FLAGS: $(inherited) -ObjC
+
+  # debugビルド定義
+  build_debug:
+    CODE_SIGN_IDENTITY: iPhone Developer
+    DEBUG_INFORMATION_FORMAT: dwarf-with-dsym
+    MTL_ENABLE_DEBUG_INFO: INCLUDE_SOURCE
+    APS_ENVIRONMENT: development
+  # releaseビルド定義
+  build_release:
+    CODE_SIGN_IDENTITY: iPhone Distribution
+    DEBUG_INFORMATION_FORMAT: dwarf-with-dsym
+    SWIFT_OPTIMIZATION_LEVEL: "-O"
+    SWIFT_COMPILATION_MODE: wholemodule
+    CLANG_ANALYZER_NONNULL: YES
+    CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION: YES_AGGRESSIVE
+    MTL_ENABLE_DEBUG_INFO: NO
+    ENABLE_NS_ASSERTIONS: NO
+    ENABLE_STRICT_OBJC_MSGSEND: YES
+    VALIDATE_PRODUCT: YES
+    APS_ENVIRONMENT: production
+
+  # develop環境定義
+  scheme_dev:
+    SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEV
+    BUNDLE_ID_SUFFIX: "-dev"
+    CODE_SIGN_STYLE: Manual
+    DEVELOPMENT_TEAM: B8PR34D6DP
+  # 本番環境定義
+  scheme_production:
+    SWIFT_ACTIVE_COMPILATION_CONDITIONS: PROD
+    BUNDLE_ID_SUFFIX: ""
+    CODE_SIGN_STYLE: Manual
+    DEVELOPMENT_TEAM: B8PR34D6DP
+
+  # develop環境・debugビルド
+  provi_dev_debug:
+    PROVISIONING_PROFILE_SPECIFIER: SwiftUIToyBox-develop-debug
+  # develop環境・releaseビルド
+  provi_dev_release:
+    PROVISIONING_PROFILE_SPECIFIER: SwiftUIToyBox-develop-debug # FIXME
+  # 本番環境・debugビルド
+  provi_production_debug:
+    PROVISIONING_PROFILE_SPECIFIER: SwiftUIToyBox-production-debug
+  # 本番環境・releaseビルド（App Storeリリース用）
+  provi_production_release:
+    PROVISIONING_PROFILE_SPECIFIER: SwiftUIToyBox-production-debug # FIXME
+
+  ## フレームワーク
+  # 共通定義
+  common_framework:
+    CODE_SIGN_STYLE: Automatic
+    SWIFT_VERSION: "5.0"
+    TARGETED_DEVICE_FAMILY: "1,2"
+  # develop環境定義
+  build_dev_framework:
+    SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEV
+  # 本番環境定義
+  build_production_framework:
+    SWIFT_ACTIVE_COMPILATION_CONDITIONS: PRODUCTION
+  # SwiftUIToyBox-UIKitフレームワーク
+  swiftUIToyBox_uikit_framework:
+    PRODUCT_BUNDLE_IDENTIFIER: 'SwiftUIToyBox-UIKit$(BUNDLE_ID_SUFFIX)'
+    SWIFT_OBJC_BRIDGING_HEADER: SwiftUIToyBox-UIKit/Resource/SwiftUIToyBox-UIKit-Header.h
+  # Dataフレームワーク
+  data_framework:
+    PRODUCT_BUNDLE_IDENTIFIER: 'data$(BUNDLE_ID_SUFFIX)'
+    SWIFT_OBJC_BRIDGING_HEADER: Data/Resource/SwiftUIToyBoxData-Header.h
+  # Domainフレームワーク
+  domain_framework:
+    PRODUCT_BUNDLE_IDENTIFIER: 'domain$(BUNDLE_ID_SUFFIX)'
+    SWIFT_OBJC_BRIDGING_HEADER: Domain/Resource/SwiftUIToyBoxDomain-Header.h
+#  # Presentationフレームワーク
+#  presentation_framework:
+#    PRODUCT_BUNDLE_IDENTIFIER: 'presentation$(BUNDLE_ID_SUFFIX)'
+#    SWIFT_OBJC_BRIDGING_HEADER: Presentation/Resource/SwiftUIToyBoxPresentation-Header.h
+
+####################
+
+# ビルドターゲット
+targets:
+  # AppMainターゲット
+  SwiftUIToyBox:
+    type: application
+    platform: iOS
+    settings:
+      configs:
+        develop-debug: # dev環境debugビルド
+          groups: [common_app, build_debug, scheme_dev, provi_dev_debug]
+        develop-release: # dev環境releaseビルド（Ad Hoc配信用）
+          groups: [common_app, build_release, scheme_dev, provi_dev_release]
+        production-debug: # 本番環境debugビルド
+          groups: [common_app, build_release, scheme_production, provi_production_debug]
+        production-release: # 本番環境releaseビルド（App Storeリリース用）
+          groups: [common_app, build_release, scheme_production, provi_production_release]
+    sources: [SwiftUIToyBox]
+    dependencies:
+      - target: SwiftUIToyBox-UIKit
+      - target: Data
+      - target: Domain
+    # SwiftGen
+    preBuildScripts:
+      - script: mint run SwiftGen swiftgen
+        name: SwiftGen
+        outputFiles:
+          - SwiftUIToyBox/Presentation/Resource/Assets/Generated/Assets.swift
+          - SwiftUIToyBox/Presentation/Resource/Strings/Generated/L10n-Constants.swift
+    # Info.plist
+    info:
+      path: SwiftUIToyBox/Application/Resource/Generated/Info.plist
+      properties:
+        CFBundleDisplayName: SwiftUIToyBox
+        CFBundlePackageType: $(PRODUCT_BUNDLE_PACKAGE_TYPE)
+        CFBundleShortVersionString: "1.0.0"
+        CFBundleVersion: "1"
+        CFBundleURLTypes:
+          - CFBundleTypeRole: Editor
+            CFBundleURLSchemes: [SwiftUIToyBox]
+        UIRequiresFullScreen: true
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeRight
+          - UIInterfaceOrientationLandscapeLeft
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeRight
+          - UIInterfaceOrientationLandscapeLeft
+        UIUserInterfaceStyle: Light
+        UIViewControllerBasedStatusBarAppearance: false
+        UILaunchStoryboardName: LaunchScreen
+        UIRequiredDeviceCapabilities: [armv7]
+        LSRequiresIPhoneOS: true
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+          UISceneConfigurations:
+            UIWindowSceneSessionRoleApplication:
+              - UISceneConfigurationName: Default Configuration
+                UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).SceneDelegate
+####################
+  # SwiftUIToyBox-UIKitフレームワーク
+  SwiftUIToyBox-UIKit:
+    type: framework
+    platform: iOS
+    settings:
+      configs:
+        develop-debug: # dev環境debugビルド
+          groups: [common_framework, build_dev_framework, swiftUIToyBox_uikit_framework]
+        develop-release: # dev環境releaseビルド（Ad Hoc配信用）
+          groups: [common_framework, build_dev_framework, swiftUIToyBox_uikit_framework]
+        production-debug: # 本番環境debugビルド
+          groups: [common_framework, build_production_framework, swiftUIToyBox_uikit_framework]
+        production-release: # 本番環境releaseビルド（App Storeリリース用）
+          groups: [common_framework, build_production_framework, swiftUIToyBox_uikit_framework]
+    sources: [SwiftUIToyBox-UIKit]
+    dependencies:
+      - target: Domain
+    info:
+      path: SwiftUIToyBox-UIKit/Resource/Generated/Info.plist
+      properties:
+        CFBundleDevelopmentRegion: $(DEVELOPMENT_LANGUAGE)
+        CFBundleExecutable: $(EXECUTABLE_NAME)
+        CFBundleIdentifier: $(PRODUCT_BUNDLE_IDENTIFIER)
+        CFBundleInfoDictionaryVersion: "6.0"
+        CFBundleName: $(PRODUCT_NAME)
+        CFBundlePackageType: $(PRODUCT_BUNDLE_PACKAGE_TYPE)
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+####################
+  # Dataフレームワーク
+  Data:
+    type: framework
+    platform: iOS
+    settings:
+      configs:
+        develop-debug: # dev環境debugビルド
+          groups: [common_framework, build_dev_framework, data_framework]
+        develop-release: # dev環境releaseビルド（Ad Hoc配信用）
+          groups: [common_framework, build_dev_framework, data_framework]
+        production-debug: # 本番環境debugビルド
+          groups: [common_framework, build_production_framework, data_framework]
+        production-release: # 本番環境releaseビルド（App Storeリリース用）
+          groups: [common_framework, build_production_framework, data_framework]
+    sources: [Data]
+    info:
+      path: Data/Resource/Generated/Info.plist
+      properties:
+        CFBundleDevelopmentRegion: $(DEVELOPMENT_LANGUAGE)
+        CFBundleExecutable: $(EXECUTABLE_NAME)
+        CFBundleIdentifier: $(PRODUCT_BUNDLE_IDENTIFIER)
+        CFBundleInfoDictionaryVersion: "6.0"
+        CFBundleName: $(PRODUCT_NAME)
+        CFBundlePackageType: $(PRODUCT_BUNDLE_PACKAGE_TYPE)
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+####################
+  # Domainフレームワーク
+  Domain:
+    type: framework
+    platform: iOS
+    settings:
+      configs:
+        develop-debug: # dev環境debugビルド
+          groups: [common_framework, build_dev_framework, domain_framework]
+        develop-release: # dev環境releaseビルド（Ad Hoc配信用）
+          groups: [common_framework, build_dev_framework, domain_framework]
+        production-debug: # 本番環境debugビルド
+          groups: [common_framework, build_production_framework, domain_framework]
+        production-release: # 本番環境releaseビルド（App Storeリリース用）
+          groups: [common_framework, build_production_framework, domain_framework]
+    sources: [Domain]
+    dependencies:
+      - target: Data
+    info:
+      path: Domain/Resource/Generated/Info.plist
+      properties:
+        CFBundleDevelopmentRegion: $(DEVELOPMENT_LANGUAGE)
+        CFBundleExecutable: $(EXECUTABLE_NAME)
+        CFBundleIdentifier: $(PRODUCT_BUNDLE_IDENTIFIER)
+        CFBundleInfoDictionaryVersion: "6.0"
+        CFBundleName: $(PRODUCT_NAME)
+        CFBundlePackageType: $(PRODUCT_BUNDLE_PACKAGE_TYPE)
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+# ####################
+#   # Presentationフレームワーク
+#   Presentation:
+#     type: framework
+#     platform: iOS
+#     settings:
+#       configs:
+#         develop-debug: # dev環境debugビルド
+#           groups: [common_framework, build_dev_framework, presentation_framework]
+#         develop-release: # dev環境releaseビルド（Ad Hoc配信用）
+#           groups: [common_framework, build_dev_framework, presentation_framework]
+#         production-debug: # 本番環境debugビルド
+#           groups: [common_framework, build_production_framework, presentation_framework]
+#         production-release: # 本番環境releaseビルド（App Storeリリース用）
+#           groups: [common_framework, build_production_framework, presentation_framework]
+#     sources: [Presentation]
+#     dependencies:
+#       - target: Domain
+#       - carthage: RxSwift
+#       - carthage: RxRelay
+#       - carthage: RxCocoa
+#       - carthage: Unio
+#     info:
+#       path: Presentation/Resources/Generated/Info.plist
+#       properties:
+#         CFBundleDevelopmentRegion: $(DEVELOPMENT_LANGUAGE)
+#         CFBundleExecutable: $(EXECUTABLE_NAME)
+#         CFBundleIdentifier: $(PRODUCT_BUNDLE_IDENTIFIER)
+#         CFBundleInfoDictionaryVersion: "6.0"
+#         CFBundleName: $(PRODUCT_NAME)
+#         CFBundlePackageType: $(PRODUCT_BUNDLE_PACKAGE_TYPE)
+#         CFBundleShortVersionString: "1.0"
+#         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+# ####################
+
+#  # UnitTestターゲット
+#  SwiftUIToyBoxTests:
+#    type: bundle.unit-test
+#    platform: iOS
+#    settings:
+#      ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES: YES
+#      BUNDLE_NAME: 'SwiftUIToyBox.tests'
+#    sources: SwiftUIToyBoxTests
+#    dependencies:
+#      - target: SwiftUIToyBox
+#####################
+#  # UITestターゲット
+#  SwiftUIToyBoxUITests:
+#    type: bundle.ui-testing
+#    platform: iOS
+#    settings:
+#      ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES: YES
+#      BUNDLE_NAME: 'SwiftUIToyBox.uitests'
+#    sources: SwiftUIToyBoxUITests
+#    dependencies:
+#      - target: SwiftUIToyBox
+#
+#####################
+
+# スキーム定義
+schemeTemplates:
+  SwiftUIToyBoxScheme:
+    build:
+      targets:
+        SwiftUIToyBox: all
+#        SwiftUIToyBoxTests: [test]
+#        SwiftUIToyBoxUITests: [test]
+    run:
+      config: ${debugConfig}
+    test:
+      config: ${debugConfig}
+#      targets:
+#        - SwiftUIToyBoxTests
+#        - SwiftUIToyBoxUITests
+    profile:
+      config: ${releaseConfig}
+    analyze:
+      config: ${debugConfig}
+    archive:
+      config: ${releaseConfig}
+schemes:
+  develop:
+    templates: [SwiftUIToyBoxScheme]
+    templateAttributes:
+      debugConfig: develop-debug
+      releaseConfig: develop-release
+  production:
+    templates: [SwiftUIToyBoxScheme]
+    templateAttributes:
+      debugConfig: production-debug
+      releaseConfig: production-release

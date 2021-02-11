@@ -21,6 +21,12 @@ options:
 attributes:
   ORGANIZATIONNAME: ""
 
+# SwiftPMで扱うPackageを定義
+packages:
+  Ricemill:
+    url: https://github.com/y-okudera/Ricemill
+    branch: master # ブランチ指定
+
 ####################
 
 # hoge_app -> SwiftUIToyBox (app)
@@ -141,6 +147,7 @@ targets:
       - target: SwiftUIToyBox-UIKit
       - target: Data
       - target: Domain
+      - package: Ricemill
     preBuildScripts:
       - path: ./Scripts/mint_run_swiftgen.sh
         name: SwiftGen

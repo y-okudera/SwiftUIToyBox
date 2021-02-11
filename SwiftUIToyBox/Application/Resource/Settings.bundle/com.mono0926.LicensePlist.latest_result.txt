@@ -1,0 +1,13 @@
+name: Carthage, nameSpecified: , owner: Carthage, version: 0.36.0
+
+name: LicensePlist, nameSpecified: , owner: mono0926, version: 3.0.5
+
+name: SwiftGen, nameSpecified: , owner: SwiftGen, version: 6.4.0
+
+name: XcodeGen, nameSpecified: , owner: yonaskolb, version: 2.18.0
+
+name: Ricemill, nameSpecified: Ricemill, owner: y-okudera, version: 
+
+add-version-numbers: false
+
+LicensePlist Version: 3.0.5

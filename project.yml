@@ -141,13 +141,16 @@ targets:
       - target: SwiftUIToyBox-UIKit
       - target: Data
       - target: Domain
-    # SwiftGen
     preBuildScripts:
-      - script: mint run SwiftGen swiftgen
+      - path: ./Scripts/mint_run_swiftgen.sh
         name: SwiftGen
         outputFiles:
           - SwiftUIToyBox/Presentation/Resource/Assets/Generated/Assets.swift
           - SwiftUIToyBox/Presentation/Resource/Strings/Generated/L10n-Constants.swift
+      - path: ./Scripts/mint_run_licenseplist.sh
+        name: LicensePlist
+      - path: ./Scripts/refresh_settingsbundle_app_version.sh
+        name: Refresh Settings.bundle App version
     # Info.plist
     info:
       path: SwiftUIToyBox/Application/Resource/Generated/Info.plist

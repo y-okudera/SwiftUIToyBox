@@ -1,0 +1,24 @@
+### Headers settings
+company: yuoku
+
+### Xcode project settings
+project_name: SwiftUIToyBox
+xcodeproj_path: SwiftUIToyBox.xcodeproj
+
+### Code generation settings section
+# The main project target name
+project_target: SwiftUIToyBox
+
+# The file path for new modules
+project_file_path: SwiftUIToyBox/Presentation/Scene
+
+# The Xcode group path to new modules
+project_group_path: SwiftUIToyBox/Presentation/Scene
+
+### Dependencies settings section
+# podfile_path: Podfile
+# cartfile_path: Cartfile
+
+### Templates
+templates:
+- {name: mvvm, local: Templates}

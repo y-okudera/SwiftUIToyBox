@@ -1,0 +1,20 @@
+//
+//  {{ module_info.file_name }}
+//  {{ module_info.project_name }}
+//
+//  Created by {{ developer.name }} on {{ date }}.
+//  Copyright © {{ year }} {{ developer.company }}. All rights reserved.
+//
+
+import Foundation
+
+/// {{ module_info.name }}へ遷移するためのWireframe
+protocol TransitTo{{ module_info.name }}Wireframe {
+    func routeTo{{ module_info.name }}View() -> {{ module_info.name }}View
+}
+
+extension TransitTo{{ module_info.name }}Wireframe {
+    func routeTo{{ module_info.name }}View() -> {{ module_info.name }}View {
+        {{ module_info.name }}Builder.build()
+    }
+}

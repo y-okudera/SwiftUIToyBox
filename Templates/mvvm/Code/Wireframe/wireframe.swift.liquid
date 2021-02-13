@@ -1,0 +1,23 @@
+//
+//  {{ module_info.file_name }}
+//  {{ module_info.project_name }}
+//
+//  Created by {{ developer.name }} on {{ date }}.
+//  Copyright © {{ year }} {{ developer.company }}. All rights reserved.
+//
+
+import Foundation
+
+enum {{ module_info.name }}WireframeProvider {
+
+    static func provide() -> {{ module_info.name }}Wireframe {
+        return {{ module_info.name }}WireframeImpl()
+    }
+}
+
+/// {{ module_info.name }}から他の画面へ遷移するためのWireframe
+///
+/// TransitoToXXXWireframeを導線のパターンだけ準拠する
+protocol {{ module_info.name }}Wireframe: TransitToNextWireframe {}
+
+final class {{ module_info.name }}WireframeImpl: {{ module_info.name }}Wireframe {}

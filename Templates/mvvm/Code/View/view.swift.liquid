@@ -1,0 +1,36 @@
+//
+//  {{ module_info.file_name }}
+//  {{ module_info.project_name }}
+//
+//  Created by {{ developer.name }} on {{ date }}.
+//  Copyright © {{ year }} {{ developer.company }}. All rights reserved.
+//
+
+import SwiftUI
+
+struct {{ module_info.name }}View: View {
+
+    @ObservedObject var viewModel: {{ module_info.name }}ViewModel
+
+    var body: some View {
+        ZStack {
+            Color(UIColor.systemBackground)
+                .edgesIgnoringSafeArea(.all)
+
+            VStack {
+                Text("ラベル")
+                Button("ボタン", action: {
+                    print("ボタンタップ")
+                })
+            }
+            .navigationBarTitle(Text("タイトル"))
+        }
+    }
+}
+
+// MARK: - PreviewProvider
+struct {{ module_info.name }}View_Previews: PreviewProvider {
+    static var previews: some View {
+        {{ module_info.name }}Builder.build()
+    }
+}

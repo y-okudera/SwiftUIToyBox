@@ -1,0 +1,50 @@
+//
+//  {{ module_info.file_name }}
+//  {{ module_info.project_name }}
+//
+//  Created by {{ developer.name }} on {{ date }}.
+//  Copyright © {{ year }} {{ developer.company }}. All rights reserved.
+//
+
+import Combine
+import Domain
+import Ricemill
+import SwiftUI
+
+enum {{ module_info.name }}ViewModelProvider {
+
+    static func provide(useCase: {{ module_info.name }}UseCase, wireframe: {{ module_info.name }}Wireframe) -> {{ module_info.name }}ViewModel {
+        {{ module_info.name }}ViewModel(
+            input: {{ module_info.name }}ViewModel.Input(),
+            store: {{ module_info.name }}ViewModel.Store(),
+            extra: {{ module_info.name }}ViewModel.Extra(useCase: useCase, wireframe: wireframe)
+        )
+    }
+}
+
+final class {{ module_info.name }}ViewModel: Machine<{{ module_info.name }}ViewModel.Resolver> {
+
+    typealias Output = Store
+
+    final class Input: BindableInputType {
+        // No Input
+    }
+
+    final class Store: StoredOutputType {
+        // No Output
+    }
+
+    struct Extra: ExtraType {
+        var useCase: {{ module_info.name }}UseCase
+        var wireframe: {{ module_info.name }}Wireframe
+    }
+
+    enum Resolver: ResolverType {
+
+        static func polish(input: Publishing<Input>, store: Store, extra: Extra) -> Polished<Output> {
+            var cancellables: [AnyCancellable] = []
+            
+            return Polished(cancellables: cancellables)
+        }
+    }
+}

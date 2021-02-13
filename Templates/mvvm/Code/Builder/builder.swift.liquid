@@ -1,0 +1,20 @@
+//
+//  {{ module_info.file_name }}
+//  {{ module_info.project_name }}
+//
+//  Created by {{ developer.name }} on {{ date }}.
+//  Copyright © {{ year }} {{ developer.company }}. All rights reserved.
+//
+
+import Domain
+
+enum {{ module_info.name }}Builder {
+
+    static func build() -> {{ module_info.name }}View {
+        let useCase = {{ module_info.name }}UseCaseProvider.provide()
+        let wireframe = {{ module_info.name }}WireframeProvider.provide()
+        let viewModel = {{ module_info.name }}ViewModelProvider.provide(useCase: useCase, wireframe: wireframe)
+        let view = {{ module_info.name }}View(viewModel: viewModel)
+        return view
+    }
+}

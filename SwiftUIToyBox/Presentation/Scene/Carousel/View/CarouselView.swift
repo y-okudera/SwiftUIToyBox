@@ -14,17 +14,33 @@ struct CarouselView: View {
 
     var body: some View {
         ZStack {
-            Color(UIColor.systemBackground)
-                .edgesIgnoringSafeArea(.all)
-
             VStack {
-                Text("ラベル")
-                Button("ボタン", action: {
-                    print("ボタンタップ")
-                })
+                imageCarouselView(uiimages: [
+                    Assets.fox.image,
+                    Assets.iceland.image,
+                    Assets.tree.image,
+                ])
+                Spacer()
             }
-            .navigationBarTitle(Text("タイトル"))
         }
+        .navigationBarTitle(Text("カルーセル"))
+    }
+}
+
+extension CarouselView {
+    func imageCarouselView(uiimages: [UIImage]) -> some View {
+        GeometryReader { geometry in
+            ImageCarouselView(numberOfImages: uiimages.count) {
+                ForEach(uiimages, id: \.self) { uiimage in
+                    Image(uiImage: uiimage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                        .clipped()
+                }
+            }
+        }
+        .frame(width: UIScreen.main.bounds.width, height: 300, alignment: .center)
     }
 }
 
